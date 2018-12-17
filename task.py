@@ -111,19 +111,18 @@ class Task():
 
         # initial rotor_speeds could be zero, hence select a random action to begin with
         if Q[state].sum() == 0:
-            #return np.random.randint((self.action_low+15), self.action_high, size=nA)
             return np.random.randint((self.action_low), self.action_high, size=nA)
         
         if random.random() > eps: # select greedy action with probability epsilon
             return Q[state]
         else:                     # otherwise, select an action randomly
-            #return np.random.randint((self.action_low+15), self.action_high, size=nA)
             return np.random.randint((self.action_low), self.action_high, size=nA)
 
 
     """ Referencing work done by Udacity-Alexis Cook
     https://github.com/udacity/deep-reinforcement-learning/blob/master/temporal-difference/Temporal_Difference_Solution.ipynb
     """
+   
     def update_Q_expsarsa(self, alpha, gamma, nA, eps, Q, state, action, reward, next_state=None):
         """Returns updated Q-value for the most recent experience."""
         current = Q[state]    # estimate in Q-table (for current state, action pair)
@@ -133,3 +132,13 @@ class Task():
         target = reward + (gamma * Qsa_next)               # construct target
         new_value = current + (alpha * (target - current)) # get updated value 
         return new_value
+
+
+    def update_Q_sarsamax(self, alpha, gamma, Q, state, action, reward, next_state=None):
+        """Returns updated Q-value for the most recent experience."""
+        current = Q[state]  # estimate in Q-table (for current state, action pair)
+        Qsa_next = np.max(Q[next_state]) if next_state is not None else 0  # value of next state 
+        target = reward + (gamma * Qsa_next)               # construct TD target
+        new_value = current + (alpha * (target - current)) # get updated value 
+        return new_value
+
